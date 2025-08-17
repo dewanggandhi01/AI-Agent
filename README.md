@@ -1,6 +1,6 @@
 # ⚡ Data Analyst Agent — Your AI-Powered Data Companion
 > Smarter, faster, and more intuitive analysis of your datasets using **Generative AI + Python magic.**
-> Repository: https://github.com/dewanggandhi01/Data-Analyst-Agent
+> Repository: https://github.com/dewanggandhi01/AI-Agent
 
 ---
 
@@ -37,7 +37,7 @@ Perfect for:
 
 ### 1️⃣ Clone the Repo
 ```bash
-git clone https://github.com/dewanggandhi01/Data-Analyst-Agent.git
+git clone https://github.com/dewanggandhi01/AI-Agent.git
 cd Data-Analyst-Agent
 ```
 
