@@ -511,7 +511,28 @@ You must:
    - A helper function `plot_to_base64(max_bytes=100000)` for generating base64-encoded images under 100KB.
 5. When returning plots, always use `plot_to_base64()` to keep image sizes small.
 6. Make sure all variables are defined before use, and the code can run without any undefined references.
-"""
+"""def map_results_robustly(questions: List[str], results_dict: Dict[str, Any]) -> Dict[str, Any]:
+    output = {}
+    results_keys = list(results_dict.keys())
+    for idx, q in enumerate(questions):
+        # 1. Exact match
+        if q in results_dict:
+            output[q] = results_dict[q]
+        # 2. Case-insensitive / stripped match
+        else:
+            found = False
+            for rk in results_keys:
+                if rk.lower().strip() == q.lower().strip():
+                    output[q] = results_dict[rk]
+                    found = True
+                    break
+            if not found:
+                # 3. Positional fallback
+                if idx < len(results_keys):
+                    output[q] = results_dict[results_keys[idx]]
+                else:
+                    output[q] = "Answer not found"
+    return output
 
 
 # -----------------------------
@@ -565,10 +586,7 @@ def run_agent_safely(llm_input: str) -> Dict:
             return {"error": f"Execution failed: {exec_result.get('message', exec_result)}", "raw": exec_result.get("raw")}
 
         results_dict = exec_result.get("result", {})
-        output = {}
-        for q in questions:
-            output[q] = results_dict.get(q, "Answer not found")
-        return output
+        return map_results_robustly(questions, results_dict)
 
     except Exception as e:
         logger.exception("run_agent_safely failed")
@@ -768,7 +786,7 @@ def run_agent_safely_unified(llm_input: str, pickle_path: str = None) -> Dict:
             return {"error": f"Execution failed: {exec_result.get('message')}", "raw": exec_result.get("raw")}
 
         results_dict = exec_result.get("result", {})
-        return {q: results_dict.get(q, "Answer not found") for q in questions}
+        return map_results_robustly(questions, results_dict)
 
     except Exception as e:
         logger.exception("run_agent_safely_unified failed")
