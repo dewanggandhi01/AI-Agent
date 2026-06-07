@@ -104,10 +104,10 @@ class LLMWithFallback:
         )
 
     def invoke(self, prompt):
-        """Try every model/key combination until one succeeds, with a max total timeout of 45s."""
+        """Try every model/key combination until one succeeds, with a max total timeout of 120s."""
         last_error = None
         start_time = time.time()
-        max_duration = 45  # fail fast if keys are rate-limited or dead
+        max_duration = 120  # allow up to 120s to find a working key/model combo
         
         for model in self.models:
             for key in self.keys:
@@ -131,8 +131,8 @@ class LLMWithFallback:
                         self.dead_keys.add(key)
                     if is_quota:
                         self.slow_keys_log[key].append(model)
+                        time.sleep(0.5)
                     self.failing_keys_log[key] += 1
-                    time.sleep(0.5)
         raise RuntimeError(f"All models/keys failed. Last error: {last_error}")
 
     def bind_tools(self, tools):
