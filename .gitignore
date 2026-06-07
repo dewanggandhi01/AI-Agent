@@ -1,0 +1,7 @@
+.env
+venv/
+__pycache__/
+.replit
+replit.md
+app.log
+.system_generated/
