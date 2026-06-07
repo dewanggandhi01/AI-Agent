@@ -99,7 +99,8 @@ class LLMWithFallback:
         return ChatGoogleGenerativeAI(
             model=model,
             temperature=self.temperature,
-            google_api_key=key
+            google_api_key=key,
+            max_retries=0
         )
 
     def invoke(self, prompt):
@@ -989,7 +990,8 @@ def _test_gemini_key_model(key, model, ping_text="ping"):
         obj = ChatGoogleGenerativeAI(
             model=model,
             temperature=0,
-            google_api_key=key
+            google_api_key=key,
+            max_retries=0
         )
 
         def extract_text(resp):
