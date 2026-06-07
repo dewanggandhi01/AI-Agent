@@ -58,8 +58,15 @@ import time
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Config
-GEMINI_KEYS = [os.getenv(f"gemini_api_{i}") for i in range(1, 11)]
-GEMINI_KEYS = [k for k in GEMINI_KEYS if k]
+GEMINI_KEYS = []
+for alt in ["GEMINI_API_KEY", "GOOGLE_API_KEY", "gemini_api_key"]:
+    k = os.getenv(alt)
+    if k and k not in GEMINI_KEYS:
+        GEMINI_KEYS.append(k)
+for i in range(1, 11):
+    k = os.getenv(f"gemini_api_{i}")
+    if k and k not in GEMINI_KEYS:
+        GEMINI_KEYS.append(k)
 
 MODEL_HIERARCHY = [
     "gemini-2.5-pro",
@@ -72,6 +79,7 @@ MODEL_HIERARCHY = [
 MAX_RETRIES_PER_KEY = 2
 TIMEOUT = 30
 QUOTA_KEYWORDS = ["quota", "exceeded", "rate limit", "403", "too many requests"]
+INVALID_KEY_KEYWORDS = ["invalid api key", "api key not valid", "api key expired", "invalid key", "key not found", "api_key_invalid", "api key not present"]
 
 if not GEMINI_KEYS:
     raise RuntimeError("No Gemini API keys found. Please set them in your environment.")
@@ -84,6 +92,7 @@ class LLMWithFallback:
         self.temperature = temperature
         self.slow_keys_log = defaultdict(list)
         self.failing_keys_log = defaultdict(int)
+        self.dead_keys = set()
         self.current_llm = None  # placeholder for actual ChatGoogleGenerativeAI instance
 
     def _make_instance(self, model: str, key: str):
@@ -94,10 +103,17 @@ class LLMWithFallback:
         )
 
     def invoke(self, prompt):
-        """Try every model/key combination until one succeeds."""
+        """Try every model/key combination until one succeeds, with a max total timeout of 45s."""
         last_error = None
+        start_time = time.time()
+        max_duration = 45  # fail fast if keys are rate-limited or dead
+        
         for model in self.models:
             for key in self.keys:
+                if key in self.dead_keys:
+                    continue
+                if time.time() - start_time > max_duration:
+                    raise RuntimeError(f"LLM fallback selection timed out. Last error: {last_error}")
                 try:
                     llm_instance = self._make_instance(model, key)
                     result = llm_instance.invoke(prompt)
@@ -108,7 +124,10 @@ class LLMWithFallback:
                     last_error = e
                     msg = str(e).lower()
                     is_quota = any(qk in msg for qk in QUOTA_KEYWORDS)
-                    logger.warning(f"LLM failed model={model} quota={is_quota}: {str(e)[:120]}")
+                    is_invalid_key = any(ik in msg for ik in INVALID_KEY_KEYWORDS) or ("api key" in msg and ("not found" in msg or "invalid" in msg))
+                    logger.warning(f"LLM failed model={model} quota={is_quota} invalid={is_invalid_key}: {str(e)[:120]}")
+                    if is_invalid_key:
+                        self.dead_keys.add(key)
                     if is_quota:
                         self.slow_keys_log[key].append(model)
                     self.failing_keys_log[key] += 1
@@ -712,6 +731,9 @@ def run_agent_safely_unified(llm_input: str, pickle_path: str = None) -> Dict:
                     break
             except Exception as e:
                 logger.warning(f"LLM attempt {attempt} failed: {e}")
+                msg = str(e)
+                if "All models/keys failed" in msg or "selection timed out" in msg:
+                    return {"error": f"LLM failed: {msg}"}
                 if attempt == max_retries:
                     return {"error": f"LLM failed after {max_retries} attempts: {e}"}
 
@@ -812,7 +834,7 @@ DIAG_NETWORK_TARGETS = {
     "OpenAI": "https://api.openai.com",
     "GitHub": "https://api.github.com",
 }
-DIAG_LLM_KEY_TIMEOUT = 30  # seconds per key/model simple ping test (sync tests run in threadpool)
+DIAG_LLM_KEY_TIMEOUT = 5  # seconds per key/model simple ping test (sync tests run in threadpool)
 DIAG_PARALLELISM = 6       # how many thread workers for sync checks
 RUN_LONGER_CHECKS = False  # Playwright/duckdb tests run only if true (they can be slow)
 
