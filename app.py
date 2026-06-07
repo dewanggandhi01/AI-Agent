@@ -69,11 +69,11 @@ for i in range(1, 11):
         GEMINI_KEYS.append(k)
 
 MODEL_HIERARCHY = [
-    "gemini-2.5-pro",
     "gemini-2.5-flash",
-    "gemini-2.5-flash-lite",
     "gemini-2.0-flash",
-    "gemini-2.0-flash-lite"
+    "gemini-1.5-flash",
+    "gemini-2.5-pro",
+    "gemini-1.5-pro"
 ]
 
 MAX_RETRIES_PER_KEY = 2
