@@ -282,7 +282,11 @@ class DataAnalystAgent {
         formData.append('data_file', this.dFile.files[0]);
       }
 
-      const response = await fetch('/api', {
+      const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? ''
+        : 'https://ai-agent-duvu.onrender.com';
+
+      const response = await fetch(`${backendUrl}/api`, {
         method: 'POST',
         body: formData
       });
