@@ -522,7 +522,10 @@ You must:
    - A helper function `plot_to_base64(max_bytes=100000)` for generating base64-encoded images under 100KB.
 5. When returning plots, always use `plot_to_base64()` to keep image sizes small.
 6. Make sure all variables are defined before use, and the code can run without any undefined references.
-"""def map_results_robustly(questions: List[str], results_dict: Dict[str, Any]) -> Dict[str, Any]:
+"""
+
+
+def map_results_robustly(questions: List[str], results_dict: Dict[str, Any]) -> Dict[str, Any]:
     output = {}
     results_keys = list(results_dict.keys())
     for idx, q in enumerate(questions):
