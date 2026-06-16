@@ -610,6 +610,7 @@ def run_agent_safely(llm_input: str) -> Dict:
 @app.post("/api")
 async def analyze_data(request: Request):
     try:
+        logger.info("POST /api - start")
         form = await request.form()
         questions_file = None
         data_file = None
@@ -627,6 +628,7 @@ async def analyze_data(request: Request):
 
         raw_questions = (await questions_file.read()).decode("utf-8")
         keys_list, type_map = parse_keys_and_types(raw_questions)
+        logger.info(f"POST /api - parsed questions, keys={keys_list}")
 
         pickle_path = None
         df_preview = ""
@@ -673,6 +675,7 @@ async def analyze_data(request: Request):
                 f"Columns: {', '.join(df.columns.astype(str))}\n"
                 f"First rows:\n{df.head(5).to_markdown(index=False)}\n"
             )
+            logger.info(f"POST /api - dataset loaded: {len(df)} rows, {len(df.columns)} cols")
 
         # Build rules based on data presence
         if dataset_uploaded:
@@ -702,16 +705,23 @@ async def analyze_data(request: Request):
             "Respond with the JSON object only."
         )
 
-        # Run agent
-        import concurrent.futures
-        with concurrent.futures.ThreadPoolExecutor() as ex:
-            fut = ex.submit(run_agent_safely_unified, llm_input, pickle_path)
-            try:
-                result = fut.result(timeout=LLM_TIMEOUT_SECONDS)
-            except concurrent.futures.TimeoutError:
-                raise HTTPException(408, "Processing timeout")
+        logger.info("POST /api - calling LLM via run_in_executor")
+        # Run the blocking LLM + code execution in the default executor
+        import asyncio
+        loop = asyncio.get_event_loop()
+        try:
+            result = await asyncio.wait_for(
+                loop.run_in_executor(None, run_agent_safely_unified, llm_input, pickle_path),
+                timeout=LLM_TIMEOUT_SECONDS
+            )
+        except asyncio.TimeoutError:
+            logger.error("POST /api - LLM processing timed out")
+            raise HTTPException(408, "Processing timeout")
+
+        logger.info(f"POST /api - LLM returned, result keys: {list(result.keys()) if isinstance(result, dict) else 'not-dict'}")
 
         if "error" in result:
+            logger.error(f"POST /api - agent error: {result['error']}")
             raise HTTPException(500, detail=result["error"])
 
         # Post-process key mapping & type casting
@@ -731,6 +741,7 @@ async def analyze_data(request: Request):
                         mapped[key] = result[q]
             result = mapped
 
+        logger.info(f"POST /api - success, returning {len(result)} keys")
         return JSONResponse(content=result)
 
     except HTTPException as he:
