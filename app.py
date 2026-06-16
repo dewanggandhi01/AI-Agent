@@ -62,12 +62,21 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# -------------------- Robust Gemini LLM with fallback --------------------
+# -------------------- LLM Setup: AI Pipe (primary) + Gemini fallback --------------------
 from collections import defaultdict
 import time
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-# Config
+# --- AI Pipe (OpenRouter proxy) config ---
+AIPIPE_TOKEN = os.getenv("AIPIPE_TOKEN", "")
+AIPIPE_BASE_URL = "https://aipipe.org/openrouter/v1"
+AIPIPE_MODELS = [
+    "google/gemini-2.5-flash",
+    "google/gemini-2.0-flash",
+    "google/gemini-1.5-flash",
+]
+
+# --- Gemini direct key config (fallback) ---
 GEMINI_KEYS = []
 for alt in ["GEMINI_API_KEY", "GOOGLE_API_KEY", "gemini_api_key"]:
     k = os.getenv(alt)
@@ -78,7 +87,7 @@ for i in range(1, 11):
     if k and k not in GEMINI_KEYS:
         GEMINI_KEYS.append(k)
 
-MODEL_HIERARCHY = [
+GEMINI_MODEL_HIERARCHY = [
     "gemini-2.5-flash",
     "gemini-2.0-flash",
     "gemini-1.5-flash",
@@ -91,21 +100,31 @@ TIMEOUT = 30
 QUOTA_KEYWORDS = ["quota", "exceeded", "rate limit", "403", "too many requests"]
 INVALID_KEY_KEYWORDS = ["invalid api key", "api key not valid", "api key expired", "invalid key", "key not found", "api_key_invalid", "api key not present"]
 
-if not GEMINI_KEYS:
-    raise RuntimeError("No Gemini API keys found. Please set them in your environment.")
+if not AIPIPE_TOKEN and not GEMINI_KEYS:
+    raise RuntimeError("No LLM credentials found. Set AIPIPE_TOKEN or GEMINI_API_KEY in your environment.")
 
-# -------------------- LLM wrapper --------------------
-class LLMWithFallback:
-    def __init__(self, keys=None, models=None, temperature=0):
-        self.keys = keys or GEMINI_KEYS
-        self.models = models or MODEL_HIERARCHY
+# -------------------- LLM wrapper with AI Pipe primary + Gemini fallback --------------------
+class LLMWithAIPipeFallback:
+    """Primary: AI Pipe (OpenRouter proxy). Fallback: direct Gemini API keys."""
+    def __init__(self, temperature=0):
         self.temperature = temperature
         self.slow_keys_log = defaultdict(list)
         self.failing_keys_log = defaultdict(int)
         self.dead_keys = set()
-        self.current_llm = None  # placeholder for actual ChatGoogleGenerativeAI instance
+        self.current_llm = None
 
-    def _make_instance(self, model: str, key: str):
+    def _make_aipipe_instance(self, model: str):
+        from langchain_openai import ChatOpenAI
+        return ChatOpenAI(
+            model=model,
+            temperature=self.temperature,
+            api_key=AIPIPE_TOKEN,
+            base_url=AIPIPE_BASE_URL,
+            max_retries=0,
+            timeout=60,
+        )
+
+    def _make_gemini_instance(self, model: str, key: str):
         return ChatGoogleGenerativeAI(
             model=model,
             temperature=self.temperature,
@@ -114,47 +133,75 @@ class LLMWithFallback:
         )
 
     def invoke(self, prompt):
-        """Try every model/key combination until one succeeds, with a max total timeout of 120s."""
+        """Try AI Pipe first (all models), then fall back to direct Gemini keys."""
         last_error = None
         start_time = time.time()
-        max_duration = 120  # allow up to 120s to find a working key/model combo
-        
-        for model in self.models:
-            for key in self.keys:
-                if key in self.dead_keys:
-                    continue
+        max_duration = 120
+
+        # --- Phase 1: AI Pipe (OpenRouter proxy) ---
+        if AIPIPE_TOKEN:
+            for model in AIPIPE_MODELS:
                 if time.time() - start_time > max_duration:
-                    raise RuntimeError(f"LLM fallback selection timed out. Last error: {last_error}")
+                    break
                 try:
-                    llm_instance = self._make_instance(model, key)
+                    llm_instance = self._make_aipipe_instance(model)
                     result = llm_instance.invoke(prompt)
-                    logger.info(f"LLM success: model={model}")
+                    logger.info(f"LLM success via AI Pipe: model={model}")
                     self.current_llm = llm_instance
                     return result
                 except Exception as e:
                     last_error = e
-                    msg = str(e).lower()
-                    is_quota = any(qk in msg for qk in QUOTA_KEYWORDS)
-                    is_invalid_key = any(ik in msg for ik in INVALID_KEY_KEYWORDS) or ("api key" in msg and ("not found" in msg or "invalid" in msg))
-                    logger.warning(f"LLM failed model={model} quota={is_quota} invalid={is_invalid_key}: {str(e)[:120]}")
-                    if is_invalid_key:
-                        self.dead_keys.add(key)
-                    if is_quota:
-                        self.slow_keys_log[key].append(model)
-                        time.sleep(0.5)
-                    self.failing_keys_log[key] += 1
-        raise RuntimeError(f"All models/keys failed. Last error: {last_error}")
+                    logger.warning(f"AI Pipe failed model={model}: {str(e)[:150]}")
+
+        # --- Phase 2: Direct Gemini API keys (fallback) ---
+        if GEMINI_KEYS:
+            for model in GEMINI_MODEL_HIERARCHY:
+                for key in GEMINI_KEYS:
+                    if key in self.dead_keys:
+                        continue
+                    if time.time() - start_time > max_duration:
+                        raise RuntimeError(f"LLM fallback timed out. Last error: {last_error}")
+                    try:
+                        llm_instance = self._make_gemini_instance(model, key)
+                        result = llm_instance.invoke(prompt)
+                        logger.info(f"LLM success via Gemini direct: model={model}")
+                        self.current_llm = llm_instance
+                        return result
+                    except Exception as e:
+                        last_error = e
+                        msg = str(e).lower()
+                        is_quota = any(qk in msg for qk in QUOTA_KEYWORDS)
+                        is_invalid_key = any(ik in msg for ik in INVALID_KEY_KEYWORDS) or ("api key" in msg and ("not found" in msg or "invalid" in msg))
+                        logger.warning(f"Gemini failed model={model} quota={is_quota} invalid={is_invalid_key}: {str(e)[:120]}")
+                        if is_invalid_key:
+                            self.dead_keys.add(key)
+                        if is_quota:
+                            self.slow_keys_log[key].append(model)
+                            time.sleep(0.5)
+                        self.failing_keys_log[key] += 1
+
+        raise RuntimeError(f"All LLM providers failed. Last error: {last_error}")
 
     def bind_tools(self, tools):
-        instance = self._make_instance(self.models[0], self.keys[0])
+        if AIPIPE_TOKEN:
+            instance = self._make_aipipe_instance(AIPIPE_MODELS[0])
+        else:
+            instance = self._make_gemini_instance(GEMINI_MODEL_HIERARCHY[0], GEMINI_KEYS[0])
         return instance.bind_tools(tools)
 
     def _get_llm_instance(self):
-        """Legacy helper kept for compatibility — returns first working instance."""
-        for model in self.models:
-            for key in self.keys:
+        """Legacy helper — returns first working instance."""
+        if AIPIPE_TOKEN:
+            try:
+                inst = self._make_aipipe_instance(AIPIPE_MODELS[0])
+                self.current_llm = inst
+                return inst
+            except Exception:
+                pass
+        for model in GEMINI_MODEL_HIERARCHY:
+            for key in GEMINI_KEYS:
                 try:
-                    inst = self._make_instance(model, key)
+                    inst = self._make_gemini_instance(model, key)
                     self.current_llm = inst
                     return inst
                 except Exception:
@@ -492,16 +539,10 @@ def plot_to_base64(max_bytes=100000):
             pass
 
 
-# -----------------------------
-# LLM agent setup
-# -----------------------------
-# llm = ChatGoogleGenerativeAI(
-#     model=os.getenv("GOOGLE_MODEL", "gemini-2.5-pro"),
-#     temperature=0,
-#     google_api_key=os.getenv("GOOGLE_API_KEY")
-# )
 # -------------------- Initialize LLM --------------------
-llm = LLMWithFallback(temperature=0)
+# Primary: AI Pipe (OpenRouter proxy) | Fallback: direct Gemini keys
+llm = LLMWithAIPipeFallback(temperature=0)
+logger.info(f"LLM initialized. AI Pipe token: {'SET' if AIPIPE_TOKEN else 'NOT SET'}, Gemini keys: {len(GEMINI_KEYS)}")
 # -----------------------------
 
 SYSTEM_PROMPT = """You are a full-stack autonomous data analyst agent.
@@ -864,6 +905,26 @@ async def test_post(request: Request):
     except Exception as e:
         return JSONResponse({"ok": False, "error": str(e)})
 
+
+@app.get("/test-llm", include_in_schema=False)
+async def test_llm():
+    """Test a minimal LLM call to verify API key works on Render."""
+    import asyncio
+    try:
+        loop = asyncio.get_event_loop()
+        def _do_llm():
+            from langchain_core.messages import HumanMessage
+            response = llm.invoke([HumanMessage(content="Reply with exactly: {\"test\": \"ok\"}")])
+            return response.content if hasattr(response, "content") else str(response)
+        result = await asyncio.wait_for(
+            loop.run_in_executor(None, _do_llm),
+            timeout=60
+        )
+        return JSONResponse({"ok": True, "llm_response": result[:500]})
+    except asyncio.TimeoutError:
+        return JSONResponse({"ok": False, "error": "LLM call timed out after 60s"})
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": str(e)})
 
 
 # -----------------------------

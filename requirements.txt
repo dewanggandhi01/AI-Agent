@@ -16,6 +16,7 @@ pillow
 langchain
 langchain-core
 langchain-google-genai
+langchain-openai
 google-generativeai
 openpyxl
 pyarrow
