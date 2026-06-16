@@ -837,6 +837,23 @@ async def analyze_get_info():
     })
 
 
+@app.post("/test-post", include_in_schema=False)
+async def test_post(request: Request):
+    """Lightweight debug endpoint to test form parsing without LLM."""
+    try:
+        form = await request.form()
+        files_info = {}
+        for key, val in form.items():
+            if hasattr(val, "filename") and val.filename:
+                content = await val.read()
+                files_info[key] = {"filename": val.filename, "size": len(content)}
+            else:
+                files_info[key] = {"value": str(val)[:100]}
+        return JSONResponse({"ok": True, "files": files_info})
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": str(e)})
+
+
 
 # -----------------------------
 # System Diagnostics
