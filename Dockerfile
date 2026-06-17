@@ -24,6 +24,7 @@ COPY validate.py .
 COPY index.html .
 COPY entrypoint.sh .
 COPY static ./static
+COPY public ./public
 
 # Copy environment file if it exists
 COPY .env* ./
