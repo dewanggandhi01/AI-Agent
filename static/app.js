@@ -625,35 +625,13 @@ class DataAnalystAgent {
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // 1. Hero Floating Visual panels
-    gsap.to('.panel-chart', {
-      y: -15,
-      x: 5,
-      rotation: 1,
-      duration: 4,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut'
-    });
-
-    gsap.to('.panel-table', {
-      y: 15,
-      x: -5,
-      rotation: -1,
-      duration: 5,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut',
-      delay: 0.5
-    });
-
-    gsap.to('.panel-nodes', {
-      y: -10,
-      x: -10,
-      duration: 4.5,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut',
+    // 1. Hero Feature Cards Stagger Reveal
+    gsap.from('.hero-feature-card', {
+      y: 30,
+      opacity: 0,
+      stagger: 0.15,
+      duration: 1,
+      ease: 'power3.out',
       delay: 0.2
     });
 
