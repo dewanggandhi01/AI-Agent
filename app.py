@@ -718,6 +718,68 @@ async def analyze_data(request: Request):
             )
             logger.info(f"POST /api - dataset loaded: {len(df)} rows, {len(df.columns)} cols")
 
+        # ---- Phase 1: Try deterministic DataAnalyzer (no LLM needed) ----
+        if dataset_uploaded:
+            try:
+                from data_analyzer import DataAnalyzer
+                analyzer = DataAnalyzer(df)
+
+                # Parse individual questions from raw_questions
+                import re as _re
+                question_lines = []
+                for line in raw_questions.strip().split("\n"):
+                    line = line.strip()
+                    if not line:
+                        continue
+                    # Remove leading number + dot
+                    cleaned = _re.sub(r"^\d+\.\s*", "", line)
+                    if cleaned and len(cleaned) > 5:
+                        question_lines.append(cleaned)
+
+                logger.info(f"POST /api - DataAnalyzer: parsed {len(question_lines)} questions")
+
+                # Analyze each question deterministically
+                da_results = {}
+                unsupported_questions = []
+                for q in question_lines:
+                    res = analyzer.analyze_question(q)
+                    if res.get("method") == "pandas_direct" and res.get("answer") is not None:
+                        da_results[q] = res["answer"]
+                        logger.info(f"POST /api - DataAnalyzer answered: '{q[:50]}...' -> {str(res['answer'])[:100]}")
+                    else:
+                        unsupported_questions.append(q)
+                        logger.info(f"POST /api - DataAnalyzer could not answer: '{q[:50]}...'")
+
+                # If DataAnalyzer handled ALL questions, return immediately (no LLM needed)
+                if not unsupported_questions:
+                    logger.info(f"POST /api - DataAnalyzer handled ALL {len(da_results)} questions. No LLM needed.")
+                    result = da_results
+
+                    # Post-process key mapping & type casting
+                    if keys_list and type_map:
+                        mapped = {}
+                        for idx, q in enumerate(result.keys()):
+                            if idx < len(keys_list):
+                                key = keys_list[idx]
+                                caster = type_map.get(key, str)
+                                try:
+                                    val = result[q]
+                                    if isinstance(val, str) and val.startswith("data:image/"):
+                                        val = val.split(",", 1)[1] if "," in val else val
+                                    mapped[key] = caster(val) if val not in (None, "") else val
+                                except Exception:
+                                    mapped[key] = result[q]
+                        result = mapped
+
+                    logger.info(f"POST /api - success (DataAnalyzer), returning {len(result)} keys")
+                    return JSONResponse(content=result)
+                else:
+                    logger.info(f"POST /api - DataAnalyzer handled {len(da_results)}/{len(question_lines)} questions. "
+                                f"{len(unsupported_questions)} need LLM fallback.")
+            except Exception as e:
+                logger.warning(f"POST /api - DataAnalyzer failed, falling back to LLM: {e}")
+
+        # ---- Phase 2: LLM fallback (for non-dataset questions or unsupported patterns) ----
         # Build rules based on data presence
         if dataset_uploaded:
             llm_rules = (
@@ -816,7 +878,7 @@ def run_agent_safely_unified(llm_input: str, pickle_path: str = None) -> Dict:
             except Exception as e:
                 logger.warning(f"LLM attempt {attempt} failed: {e}")
                 msg = str(e)
-                if "All models/keys failed" in msg or "selection timed out" in msg:
+                if "All models/keys failed" in msg or "All LLM providers failed" in msg or "selection timed out" in msg or "fallback timed out" in msg:
                     return {"error": f"LLM failed: {msg}"}
                 if attempt == max_retries:
                     return {"error": f"LLM failed after {max_retries} attempts: {e}"}

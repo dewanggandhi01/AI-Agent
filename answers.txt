@@ -1,0 +1,84 @@
+======================================================================
+AI DATA ANALYST AGENT — VALIDATED ANSWERS
+======================================================================
+
+Q1. What is the total revenue generated?
+Answer: 2310600
+Method: pandas_direct
+--------------------------------------------------
+Q2. What is the total profit earned?
+Answer: 344241
+Method: pandas_direct
+--------------------------------------------------
+Q3. Which region generated the highest revenue?
+Answer: North (687100)
+Method: pandas_direct
+--------------------------------------------------
+Q4. Which region generated the lowest revenue?
+Answer: West (470200)
+Method: pandas_direct
+--------------------------------------------------
+Q5. What is the average revenue per order?
+Answer: 4621.2
+Method: pandas_direct
+--------------------------------------------------
+Q6. Which product category generated the highest revenue?
+Answer: Home (762700)
+Method: pandas_direct
+--------------------------------------------------
+Q7. Which product category generated the highest profit?
+Answer: Home (114058)
+Method: pandas_direct
+--------------------------------------------------
+Q8. What are the top 5 products by revenue?
+Answer: 1. Shelf (299100), 2. Yoga Mat (196700), 3. Shirt (182300), 4. Chair (172200), 5. Table (170400)
+Method: pandas_direct
+--------------------------------------------------
+Q9. What are the top 5 products by profit?
+Answer: 1. Shelf (42123), 2. Yoga Mat (29486), 3. Table (27499), 4. Shirt (26234), 5. Chair (25920)
+Method: pandas_direct
+--------------------------------------------------
+Q10. Which customer type generated the highest revenue?
+Answer: Corporate (1303900)
+Method: pandas_direct
+--------------------------------------------------
+Q11. Which customer type generated the highest profit?
+Answer: Corporate (198273)
+Method: pandas_direct
+--------------------------------------------------
+Q12. What is the total quantity sold across all orders?
+Answer: 2750
+Method: pandas_direct
+--------------------------------------------------
+Q13. Which month had the highest revenue?
+Answer: 2025-03 (312400)
+Method: pandas_direct
+--------------------------------------------------
+Q14. Which month had the highest profit?
+Answer: 2025-03 (45605)
+Method: pandas_direct
+--------------------------------------------------
+Q15. What is the average profit margin?
+Answer: 14.93%
+Method: pandas_direct
+--------------------------------------------------
+Q16. Which product was sold in the highest quantity?
+Answer: Shelf (273)
+Method: pandas_direct
+--------------------------------------------------
+Q17. What is the revenue contribution percentage of each region?
+Answer: North: 29.74%, South: 29.55%, East: 20.36%, West: 20.35%
+Method: pandas_direct
+--------------------------------------------------
+Q18. Show the monthly revenue trend.
+Answer: 2025-01: 218000; 2025-02: 190700; 2025-03: 312400; 2025-04: 267300; 2025-05: 240300; 2025-06: 111500; 2025-07: 176700; 2025-08: 120100; 2025-09: 206100; 2025-10: 142700; 2025-11: 150900; 2025-12: 173900
+Method: pandas_direct
+--------------------------------------------------
+Q19. Show the monthly profit trend.
+Answer: 2025-01: 31842; 2025-02: 27809; 2025-03: 45605; 2025-04: 37766; 2025-05: 36369; 2025-06: 17871; 2025-07: 27484; 2025-08: 16233; 2025-09: 29956; 2025-10: 21603; 2025-11: 23223; 2025-12: 28480
+Method: pandas_direct
+--------------------------------------------------
+Q20. Identify the best-performing product category based on revenue and profit.
+Answer: Home (762700)
+Method: pandas_direct
+--------------------------------------------------
