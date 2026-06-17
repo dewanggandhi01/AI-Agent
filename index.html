@@ -138,8 +138,8 @@
   <section id="how-it-works">
     <div class="how-it-works-intro">
       <div class="eyebrow-tag"><span class="dot"></span>Workflow</div>
-      <h2>Engineered for Clarity</h2>
-      <p>A simple, three-step sequential cycle connects your inquiries directly to deep analytical insights.</p>
+      <h2>Analysis Pipeline</h2>
+      <p>A step-by-step breakdown of how your dataset and queries are processed in real time.</p>
     </div>
 
     <div class="horizontal-scroll-container">
@@ -150,8 +150,8 @@
           <span class="step-number">01</span>
         </div>
         <div class="step-content">
-          <h3 class="step-title">Upload Data</h3>
-          <p class="step-desc">Provide a plain text questions file and your optional dataset (.csv, .xlsx, .json, or .parquet). No preparation is required.</p>
+          <h3 class="step-title">Upload Excel Dataset</h3>
+          <p class="step-desc">Provide your structured transactions or data spreadsheet (.xlsx, .csv, or .json) through the interactive console.</p>
         </div>
       </div>
 
@@ -162,8 +162,8 @@
           <span class="step-number">02</span>
         </div>
         <div class="step-content">
-          <h3 class="step-title">Run Reasoning</h3>
-          <p class="step-desc">The Google Gemini core parses constraints, handles web scrapers, structures algorithms, and executes calculations in a local python runtime sandbox.</p>
+          <h3 class="step-title">Upload Questions.txt</h3>
+          <p class="step-desc">Provide the plain text file (.txt) containing numbered analytical questions you want the agent to resolve.</p>
         </div>
       </div>
 
@@ -174,8 +174,32 @@
           <span class="step-number">03</span>
         </div>
         <div class="step-content">
-          <h3 class="step-title">Get Intelligence</h3>
-          <p class="step-desc">Instantly inspect formatted answers, high-resolution plots, dataset structural summaries, and detailed developer logs.</p>
+          <h3 class="step-title">Gemini Parses Questions</h3>
+          <p class="step-desc">The Google Gemini Core checks parameters, identifies constraints, and selects the matching parsing algorithm.</p>
+        </div>
+      </div>
+
+      <!-- Step 04 -->
+      <div class="scroll-step-card">
+        <div class="step-header">
+          <span class="step-tag">Step 04</span>
+          <span class="step-number">04</span>
+        </div>
+        <div class="step-content">
+          <h3 class="step-title">Python Executes Analysis</h3>
+          <p class="step-desc">Our deterministic pandas backend runs direct calculations on your DataFrame, ensuring 100% calculation accuracy.</p>
+        </div>
+      </div>
+
+      <!-- Step 05 -->
+      <div class="scroll-step-card">
+        <div class="step-header">
+          <span class="step-tag">Step 05</span>
+          <span class="step-number">05</span>
+        </div>
+        <div class="step-content">
+          <h3 class="step-title">Charts + Answers Generated</h3>
+          <p class="step-desc">Visual matplotlib charts and exact numerical answers are rendered dynamically on the outcomes board.</p>
         </div>
       </div>
     </div>
@@ -566,43 +590,14 @@
   </section>
 
   <!-- ==========================================
-       SECTION 8 — PERFORMANCE
-       ========================================== -->
-  <section id="metrics" class="chapter-section">
-    <div class="chapter-num">CHAPTER 08</div>
-    <div class="section-container">
-      <div class="section-header-center">
-        <div class="eyebrow-tag"><span class="dot"></span>Performance</div>
-        <h2>Engine Efficiency</h2>
-        <p>High-end metrics reflecting optimized dataset reasoning speeds and success rates.</p>
-      </div>
-
-      <div class="metrics-grid">
-        <div class="metric-item">
-          <div class="metric-value" id="metric-rate">0%</div>
-          <span class="metric-label">QUESTION SUCCESS RATE</span>
-        </div>
-        <div class="metric-item">
-          <div class="metric-value" id="metric-datasets">0+</div>
-          <span class="metric-label">DATASETS EVALUATED</span>
-        </div>
-        <div class="metric-item">
-          <div class="metric-value" id="metric-speed">0X</div>
-          <span class="metric-label">FASTER EXECUTION</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==========================================
        SECTION 9 — FINAL CTA
        ========================================== -->
   <section id="final-cta">
     <div class="final-cta-content">
-      <h2>Ready to unlock your data?</h2>
-      <p>Submit questions and spreadsheets to get instant, production-grade automated intelligence.</p>
+      <h2>Start Analysis</h2>
+      <p>Upload your Excel spreadsheets and questions file to run deterministic data analysis with clean, professional visualizations.</p>
       <a class="btn-primary-action scroll-link" href="#upload-zone-section">
-        START ANALYSIS
+        TRY THE AGENT
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="5" y1="12" x2="19" y2="12"></line>
           <polyline points="12 5 19 12 12 19"></polyline>
@@ -610,6 +605,44 @@
       </a>
     </div>
   </section>
+
+  <!-- ==========================================
+       FOOTER & PERSONAL IDENTITY
+       ========================================== -->
+  <footer style="background: rgba(10, 15, 30, 0.9); border-top: 1px solid var(--border); padding: 50px 20px; text-align: center; color: var(--text-secondary);">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <h4 style="color: var(--text-primary); font-size: 1.25rem; font-weight: bold; margin: 0;">
+          Built by Dewang Gandhi
+        </h4>
+        <p style="font-size: 0.9rem; margin: 0; opacity: 0.85; line-height: 1.6;">
+          B.Tech CSE, ABES Engineering College <br>
+          BS Data Science, IIT Madras
+        </p>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+        <div style="font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.6; font-weight: bold;">
+          Powered by
+        </div>
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; font-size: 0.9rem; font-family: var(--font-mono, monospace); color: var(--accent, #6366f1); font-weight: 600;">
+          <span>Gemini</span>
+          <span style="color: var(--border);">|</span>
+          <span>FastAPI</span>
+          <span style="color: var(--border);">|</span>
+          <span>Python</span>
+          <span style="color: var(--border);">|</span>
+          <span>Pandas</span>
+          <span style="color: var(--border);">|</span>
+          <span>Matplotlib</span>
+        </div>
+      </div>
+
+      <div style="font-size: 0.78rem; opacity: 0.5; margin-top: 10px;">
+        &copy; 2026 Dewang Gandhi. All rights reserved.
+      </div>
+    </div>
+  </footer>
 
   <!-- Lightbox Frame for Images -->
   <div class="result-lightbox" id="resultLightbox">

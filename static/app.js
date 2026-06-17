@@ -741,41 +741,6 @@ class DataAnalystAgent {
     // 6. Monitor Screen Typist Simulator in Section 6 (Live Preview)
     this._initTypistEffect();
 
-    // 7. Counter Animation for performance metrics
-    gsap.from('.metric-item', {
-      scrollTrigger: {
-        trigger: '#metrics',
-        start: 'top 75%',
-        onEnter: () => this._animateCounters()
-      },
-      y: 40,
-      opacity: 0,
-      stagger: 0.2,
-      duration: 0.8,
-      ease: 'power3.out'
-    });
-  }
-
-  _animateCounters() {
-    const targets = [
-      { id: 'metric-rate', val: 98, suffix: '%' },
-      { id: 'metric-datasets', val: 500, suffix: '+' },
-      { id: 'metric-speed', val: 10, suffix: 'X' }
-    ];
-
-    targets.forEach(t => {
-      const el = document.getElementById(t.id);
-      if (!el) return;
-      const obj = { value: 0 };
-      gsap.to(obj, {
-        value: t.val,
-        duration: 2,
-        ease: 'power3.out',
-        onUpdate: () => {
-          el.textContent = Math.floor(obj.value) + t.suffix;
-        }
-      });
-    });
   }
 
   _initTypistEffect() {
