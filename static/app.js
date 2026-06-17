@@ -329,7 +329,12 @@ class DataAnalystAgent {
       return;
     }
 
-    const entries = Object.entries(data);
+    // Extract charts if present
+    const charts = data.charts || {};
+    const dataCopy = { ...data };
+    delete dataCopy.charts;
+
+    const entries = Object.entries(dataCopy);
     if (!entries.length) {
       this._renderError('Analysis returned no output entries.');
       return;
@@ -355,6 +360,12 @@ class DataAnalystAgent {
       body.className = 'res-ans-body';
       this._renderAnswerContent(answer, body);
 
+      // Check if there is an associated chart for this question index
+      const chartKey = `chart_${index + 1}`;
+      if (charts[chartKey]) {
+        this._renderChartImage(charts[chartKey], body);
+      }
+
       card.appendChild(header);
       card.appendChild(body);
       this.resultsContainer.appendChild(card);
@@ -375,6 +386,26 @@ class DataAnalystAgent {
         ease: 'power3.out'
       });
     }, 200);
+  }
+
+  _renderChartImage(imgSrc, container) {
+    const wrap = document.createElement('div');
+    wrap.className = 'res-image-wrapper';
+    wrap.style.marginTop = '15px';
+    wrap.style.display = 'block';
+    
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.alt = 'Analysis Chart';
+    img.addEventListener('click', () => this._openLightbox(imgSrc));
+    
+    const hint = document.createElement('div');
+    hint.className = 'res-image-hint';
+    hint.textContent = '🔍 CLICK CHART TO EXPAND';
+    
+    wrap.appendChild(img);
+    wrap.appendChild(hint);
+    container.appendChild(wrap);
   }
 
   _renderAnswerContent(value, container) {

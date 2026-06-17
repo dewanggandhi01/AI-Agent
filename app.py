@@ -740,11 +740,14 @@ async def analyze_data(request: Request):
 
                 # Analyze each question deterministically
                 da_results = {}
+                da_charts = {}
                 unsupported_questions = []
                 for q in question_lines:
                     res = analyzer.analyze_question(q)
                     if res.get("method") == "pandas_direct" and res.get("answer") is not None:
                         da_results[q] = res["answer"]
+                        if res.get("chart"):
+                            da_charts[q] = res["chart"]
                         logger.info(f"POST /api - DataAnalyzer answered: '{q[:50]}...' -> {str(res['answer'])[:100]}")
                     else:
                         unsupported_questions.append(q)
@@ -752,7 +755,8 @@ async def analyze_data(request: Request):
 
                 # If DataAnalyzer handled ALL questions, return immediately (no LLM needed)
                 if not unsupported_questions:
-                    logger.info(f"POST /api - DataAnalyzer handled ALL {len(da_results)} questions. No LLM needed.")
+                    logger.info(f"POST /api - DataAnalyzer handled ALL {len(da_results)} questions. "
+                                f"Charts generated: {len(da_charts)}")
                     result = da_results
 
                     # Post-process key mapping & type casting
@@ -770,6 +774,15 @@ async def analyze_data(request: Request):
                                 except Exception:
                                     mapped[key] = result[q]
                         result = mapped
+
+                    # Attach charts to response
+                    if da_charts:
+                        charts_mapped = {}
+                        for idx, q in enumerate(question_lines):
+                            if q in da_charts:
+                                chart_key = f"chart_{idx+1}"
+                                charts_mapped[chart_key] = da_charts[q]
+                        result["charts"] = charts_mapped
 
                     logger.info(f"POST /api - success (DataAnalyzer), returning {len(result)} keys")
                     return JSONResponse(content=result)
