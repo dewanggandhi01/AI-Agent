@@ -1,187 +1,148 @@
-# ⚡ Data Analyst Agent — Your AI-Powered Data Companion
-> Smarter, faster, and more intuitive analysis of your datasets using **Generative AI + Python magic.**
-> Repository: https://github.com/dewanggandhi01/AI-Agent
+# AI Data Analyst Agent
+
+A premium, developer-focused AI data analyst agent designed to automate complex analytical reasoning, execute sandboxed calculations, and generate production-grade visualizations directly from uploaded datasets.
+
+The system utilizes a dual-phase execution pipeline, combining a fast deterministic analysis engine with a secure LLM-driven runtime fallback.
 
 ---
 
-## 📌 What Is This?
-Meet **Data Analyst Agent 2.0** — an AI-driven assistant that eliminates tedious data crunching.
-Upload your dataset + queries, and instantly get:
-✅ Visual reports
-✅ AI-generated insights
-✅ Automated workflows
+## System Architecture and Execution Flow
 
-Perfect for:
-- Analysts 🧾
-- Researchers 🔬
-- Startups & Businesses 📈
-- Anyone who loves turning raw data into knowledge
+The following flowchart outlines how datasets and query files are processed by the system:
 
----
-
-## ✨ Key Highlights
-
-| Feature | Why It’s Awesome 🚀 |
-|---------------------------|----------------------|
-| 🤖 AI-Powered Insights | Uses Google’s Generative AI to “understand” your data |
-| 📊 Rich Visualizations | Generates plots with **Seaborn & Matplotlib** |
-| 🌍 Web Scraper Mode | Fetch live data directly from URLs |
-| 📂 Multi-Format Friendly | Accepts CSV, Excel, JSON, Parquet, or TXT |
-| 🔄 Ask Many at Once | Batch processing for multiple questions |
-| 🖥️ Simple-to-Use Interface | Beginner friendly, no steep learning curve |
-| ⚡ Super-Fast Execution | Optimized for speed + real-time feedback |
-
----
-
-## 🚀 Getting Started
-
-### 1️⃣ Clone the Repo
-```bash
-git clone https://github.com/dewanggandhi01/AI-Agent.git
-cd Data-Analyst-Agent
+```mermaid
+graph TD
+    A[Input Files: Dataset & question.txt] --> B[FastAPI Backend /api]
+    B --> C[Phase 1: Deterministic DataAnalyzer]
+    C -->|Pattern Match Success| D[Direct Pandas Aggregation & Matplotlib Chart Generation]
+    C -->|Unsupported Query Pattern| E[Phase 2: LLM Agent Reasoning Fallback]
+    E -->|API Key: AIPIPE_TOKEN / GEMINI_API_KEY| F[LLM Sandbox Python Code Generation]
+    F --> G[Execution in Secure Local Runtime]
+    G --> H[Output Extraction & Matplotlib Chart Generation]
+    D --> I[Sized Base64 Response Aggregator]
+    H --> I
+    I --> J[JSON Response: Answers + Charts Object]
+    J --> K[Frontend: Dynamic Results Grid & Visualization Panels]
 ```
 
-### 2️⃣ Install Requirements
+---
+
+## Core Capabilities
+
+### 1. Natural Language Analysis
+Converts plain English queries into structured analytical instructions. The system matches complex criteria, groups, and filters data programmatically without requiring manual SQL or spreadsheet mapping.
+
+### 2. Automatic Visualizations
+Generates high-resolution Matplotlib/Seaborn plots tailored for dark-themed user interfaces. Chart assets are dynamically downscaled and compressed to optimize network payloads and loading speed.
+
+### 3. Python Execution Engine
+Calculates advanced statistical metrics, regressions, and aggregations using a secure runtime environment with Pandas and NumPy. This prevents formula syntax limitations common in typical spreadsheets.
+
+### 4. Multi-File Reasoning
+Simultaneously evaluates cross-file conditions by ingesting tabular datasets together with text-based directive files, mapping inputs without manual setup.
+
+---
+
+## Technical Specifications
+
+### Tech Stack
+* **Backend**: FastAPI, LangChain, Google Generative AI (Gemini Flash/Pro models via OpenRouter or direct API), Pandas, NumPy, Matplotlib, Seaborn.
+* **Frontend**: HTML5, CSS3 (Vanilla), JavaScript, GSAP (GreenSock Animation Platform) for smooth stagger-reveal layout animations.
+
+### Supported File Formats
+* **CSV**: `.csv`
+* **Excel**: `.xlsx`, `.xls`
+* **JSON**: `.json`
+* **Parquet**: `.parquet`
+* **Text**: `.txt`
+
+---
+
+## Getting Started
+
+### Prerequisites
+* Python 3.9 or higher
+* pip (Python package installer)
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/dewanggandhi01/AI-Agent.git
+cd AI-Agent
+```
+
+### 2. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3️⃣ Configure API Keys
-Create a `.env` file inside the root folder:
-```
-GEMINI_API_KEY=your_google_api_key
+### 3. Configure Environment Variables
+Create a `.env` file in the root directory:
+```ini
+# Primary: AI Pipe Token for OpenRouter API access
+AIPIPE_TOKEN=your_aipipe_token
+
+# Fallback: Direct Gemini API key
+GEMINI_API_KEY=your_gemini_api_key
+
+# Request Configuration
 LLM_TIMEOUT_SECONDS=240
 ```
 
-### 4️⃣ Start the Application
+### 4. Start the Local Server
 ```bash
-python -m uvicorn app:app --reload
+python -m uvicorn app:app --port 8000
 ```
-Now open [**http://localhost:8000/**](http://localhost:8000/) in your browser 🌐
+Access the application by navigating to `http://localhost:8000` in your browser.
 
 ---
 
-## 🧑‍💻 How It Works
+## API Reference
 
-The application exposes an API endpoint that accepts a POST request with a data analysis task.
+### Access Web Application
+* **Method**: `GET`
+* **Endpoint**: `/`
+* **Response**: Web dashboard interface.
 
-1.  **Prepare Your Files**:
-    *   **Questions File (Required)**: A `.txt` file containing the questions you want to ask.
-    *   **Data Files (Optional)**: Any relevant data files (e.g., `.csv`, `.xlsx`, `.png`).
-
-2.  **Send the Request**:
-    Make a `POST` request to the `/api` endpoint with your files.
-
-    **Example using cURL:**
-    ```bash
-    curl "http://localhost:8000/api/" \
-      -F "questions_file=@questions.txt" \
-      -F "data_file=@data.csv"
-    ```
-
-3.  **Get Results**:
-    The API will process the request and return a JSON response with the answers. The response format depends on the questions asked.
-
----
-
-### Sample Questions
-
-Here are some examples of what you can put in your `questions.txt` file.
-
-**Example 1: Web Scraping & Analysis**
-```
-Scrape the list of highest grossing films from Wikipedia. It is at the URL:
-https://en.wikipedia.org/wiki/List_of_highest-grossing_films
-
-Answer the following questions and respond with a JSON array of strings containing the answer.
-
-1. How many $2 bn movies were released before 2000?
-2. Which is the earliest film that grossed over $1.5 bn?
-3. What's the correlation between the Rank and Peak?
-4. Draw a scatterplot of Rank and Peak along with a dotted red regression line through it.
-   Return as a base-64 encoded data URI, "data:image/png;base64,iVBORw0KG..." under 100,000 bytes.
-```
-**Expected Response:**
-```json
-[1, "Titanic", 0.485782, "data:image/png;base64,iVBORw0KG..."]
-```
-
-**Example 2: Large Dataset Analysis**
-```
-The Indian high court judgement dataset contains judgements from the Indian High Courts.
-
-Answer the following questions and respond with a JSON object containing the answer.
-
-{
-  "Which high court disposed the most cases from 2019 - 2022?": "...",
-  "What's the regression slope of the date_of_registration - decision_date by year in the court=33_10?": "...",
-  "Plot the year and # of days of delay from the above question as a scatterplot with a regression line. Encode as a base64 data URI under 100,000 characters": "data:image/webp:base64,..."
-}
-```
+### Submit Analytical Request
+* **Method**: `POST`
+* **Endpoint**: `/api`
+* **Request Format**: `multipart/form-data`
+  * `questions_file` (Required): A `.txt` file containing numbered questions.
+  * `data_file` (Optional): Tabular dataset file.
+* **Response Format**: `application/json`
+  ```json
+  {
+    "Which department has the highest sales?": "Marketing ($450k)",
+    "charts": {
+      "chart_1": "data:image/png;base64,..."
+    }
+  }
+  ```
 
 ---
 
-## 🛠 Tech Behind the Scenes
+## Verification & Evaluation
 
-### Backend
-- **FastAPI** ⚡ → High-performance web server
-- **LangChain** 🧠 → Orchestrates LLM interactions
-- **Google Generative AI** ✨ → Core AI engine
-- **Pandas + NumPy** 📊 → Data wrangling made smooth
-- **Seaborn + Matplotlib** 🎨 → Clean, insightful charts
-
-### Frontend
-- HTML5 + CSS + JavaScript
-- Modern, responsive UI with advanced features like theme switching.
+The system is tested using a deterministic validation suite:
+1. **validate.py**: Runs local data evaluation matching tabular inputs against `question.txt` directly without incurring LLM API costs.
+   ```bash
+   python validate.py --questions question.txt --data sales_data.xlsx --output answers.txt
+   ```
+2. **Quality Gates**: Responses are verified against validation rubrics covering structural JSON parsing, value matching (with numerical tolerance), and chart dimensions/size.
 
 ---
 
-## 🔧 API Blueprint
+## Project Context
+Built as an immersive portfolio showcase demonstrating the capabilities of automated data pipelines and LLM-directed program synthesis.
 
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| `GET` | `/` | Access the web application |
-| `POST` | `/api` | Submit a dataset and questions for analysis |
-
----
-
-## 📂 File Support
-
-| Format | Extensions |
-|--------|------------|
-| CSV | `.csv` |
-| Excel | `.xlsx`, `.xls` |
-| JSON | `.json` |
-| Parquet| `.parquet` |
-| Text | `.txt` |
+**Developer**: Dewang Gandhi
+* CSE B.Tech, ABES Engineering College
+* BS Data Science, IIT Madras
 
 ---
 
-## 🧪 Evaluation
-
-This project is evaluated using `promptfoo`. The tests assert the correctness of the API responses based on a predefined rubric.
-
-**Sample Evaluation:**
-- **Structural Gate**: Checks if the response is a valid JSON array with the correct number of items.
-- **Content Validation**:
-    - `python` assertions to check for specific values (e.g., `output[0] == 1`).
-    - Regex matching for text-based answers.
-    - Numerical comparison within a tolerance.
-- **Vision Check**:
-    - An `llm-rubric` is used to grade plots sent to GPT-4.
-    - It verifies criteria like chart type, colors, labels, and file size.
-
----
-
-## 🔒 Security First
-- ✅ **No Cloud Storage**: All data is processed locally and not stored.
-- ✅ **Safe API Keys**: API keys are managed securely using a `.env` file.
-- ✅ **Configurable CORS**: The CORS policy can be configured for production environments.
-
----
-
-## 📜 License
-Licensed under **MIT** – free for personal & commercial use.
+## License
+Licensed under the MIT License – free for personal and commercial use.
 
 
 
