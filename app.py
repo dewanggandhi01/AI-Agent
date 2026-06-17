@@ -61,6 +61,7 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/public", StaticFiles(directory="public"), name="public")
 
 # -------------------- LLM Setup: AI Pipe (primary) + Gemini fallback --------------------
 from collections import defaultdict

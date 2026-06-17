@@ -251,6 +251,41 @@
         </div>
       </div>
 
+      <!-- Sample Files Container -->
+      <div class="sample-files-card" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 24px; margin-top: 30px; display: flex; flex-direction: column; gap: 16px; text-align: left;">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <h3 style="color: var(--text-primary); font-size: 1.15rem; font-weight: bold; margin: 0; display: flex; align-items: center; gap: 8px;">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; color: var(--accent, #6366f1);">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z" />
+            </svg>
+            Sample Files
+          </h3>
+          <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0; line-height: 1.5;">
+            If you don't have your own dataset, you can use the sample files below to test the platform.
+          </p>
+        </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <a href="/public/samples/sales_data.xlsx" download="sales_data.xlsx" class="btn-secondary-action" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-size: 0.85rem; padding: 10px 18px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" style="width: 15px; height: 15px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Download Sample Dataset
+          </a>
+          <a href="/public/samples/questions.txt" download="questions.txt" class="btn-secondary-action" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-size: 0.85rem; padding: 10px 18px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" style="width: 15px; height: 15px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Download Sample Questions
+          </a>
+        </div>
+        <div style="color: var(--text-secondary); font-size: 0.78rem; opacity: 0.8; font-style: italic; display: flex; align-items: center; gap: 6px;">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; flex-shrink: 0;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+          </svg>
+          These files are provided only as sample inputs to help users understand the expected format.
+        </div>
+      </div>
+
       <!-- Control actions -->
       <div class="upload-action-panel">
         <div class="upload-action-row">
