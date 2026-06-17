@@ -961,98 +961,7 @@ nav {
   100% { left: 100%; }
 }
 
-/* ==========================================================================
-   SECTION 5 — FEATURES (Compact Grid)
-   ========================================================================== */
-#features-section {
-  background-color: var(--bg);
-  padding: 100px 80px;
-  border-bottom: 1px solid var(--border);
-  min-height: auto;
-  display: flex;
-  align-items: center;
-}
 
-#features-section .section-container {
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-  margin-top: 48px;
-}
-
-.feature-card-compact {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 160px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.feature-card-compact:hover {
-  border-color: var(--accent);
-  background: rgba(255, 106, 0, 0.02);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-}
-
-.feature-card-compact .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.feature-card-compact .card-num {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  letter-spacing: 0.05em;
-  opacity: 0.5;
-  transition: color 0.3s, opacity 0.3s;
-}
-
-.feature-card-compact:hover .card-num {
-  color: var(--accent);
-  opacity: 1;
-}
-
-.feature-card-compact .card-icon {
-  color: var(--text-secondary);
-  transition: color 0.3s, transform 0.3s, opacity 0.3s;
-  opacity: 0.6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.feature-card-compact:hover .card-icon {
-  color: var(--accent);
-  transform: scale(1.1);
-  opacity: 1;
-}
-
-.feature-card-compact .card-title {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.25;
-  margin: 0;
-  letter-spacing: -0.01em;
-}
 
 /* ==========================================================================
    SECTION 6 — LIVE PREVIEW
@@ -1462,20 +1371,7 @@ nav {
     grid-template-columns: 1fr;
   }
 
-  #features-section {
-    padding: 80px 40px;
-  }
-  .feature-card-compact {
-    padding: 28px;
-    height: 140px;
-  }
-  .feature-card-compact .card-title {
-    font-size: 1.35rem;
-  }
-  .features-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
+
 
   .preview-content {
     grid-template-columns: 1fr;

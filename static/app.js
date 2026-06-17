@@ -625,15 +625,7 @@ class DataAnalystAgent {
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // 1. Hero Feature Cards Stagger Reveal
-    gsap.from('.hero-feature-card', {
-      y: 30,
-      opacity: 0,
-      stagger: 0.15,
-      duration: 1,
-      ease: 'power3.out',
-      delay: 0.2
-    });
+
 
     // 2. Hero Text Reveal Animation
     gsap.from('.hero-left h1 span', {
@@ -691,18 +683,7 @@ class DataAnalystAgent {
       ease: 'power3.out'
     });
 
-    // 5. Scroll triggers for compact Feature cards grid
-    gsap.from('.feature-card-compact', {
-      scrollTrigger: {
-        trigger: '#features-section',
-        start: 'top 75%'
-      },
-      y: 30,
-      opacity: 0,
-      stagger: 0.15,
-      duration: 0.8,
-      ease: 'power3.out'
-    });
+
 
   }
 }
