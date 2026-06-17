@@ -713,29 +713,17 @@ class DataAnalystAgent {
       ease: 'power3.out'
     });
 
-    // 5. Scroll triggers for full screen Feature panels
-    document.querySelectorAll('.feature-bleed-section').forEach((section, index) => {
-      gsap.from(section.querySelector('.feature-info'), {
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 70%'
-        },
-        x: index % 2 === 0 ? -50 : 50,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out'
-      });
-
-      gsap.from(section.querySelector('.feature-canvas'), {
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 70%'
-        },
-        scale: 0.9,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out'
-      });
+    // 5. Scroll triggers for compact Feature cards grid
+    gsap.from('.feature-card-compact', {
+      scrollTrigger: {
+        trigger: '#features-section',
+        start: 'top 75%'
+      },
+      y: 30,
+      opacity: 0,
+      stagger: 0.15,
+      duration: 0.8,
+      ease: 'power3.out'
     });
 
   }

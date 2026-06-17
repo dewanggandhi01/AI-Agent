@@ -1019,135 +1019,97 @@ nav {
 }
 
 /* ==========================================================================
-   SECTION 5 — FEATURES (Full Screen Panels)
+   SECTION 5 — FEATURES (Compact Grid)
    ========================================================================== */
-.feature-bleed-section {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  padding: 80px;
-  border-bottom: 1px solid var(--border);
-}
-.feature-bleed-section:nth-child(odd) {
+#features-section {
   background-color: var(--bg);
-}
-.feature-bleed-section:nth-child(even) {
-  background-color: var(--bg-secondary);
+  padding: 100px 80px;
+  border-bottom: 1px solid var(--border);
+  min-height: auto;
+  display: flex;
+  align-items: center;
 }
 
-.feature-info {
-  padding: 40px;
-  z-index: 10;
+#features-section .section-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
 }
-.feature-num {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--accent);
-  letter-spacing: 0.1em;
-  margin-bottom: 20px;
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 48px;
 }
-.feature-info h2 {
-  font-size: 3rem;
-  line-height: 1.1;
-  text-transform: uppercase;
+
+.feature-card-compact {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 160px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card-compact:hover {
+  border-color: var(--accent);
+  background: rgba(255, 106, 0, 0.02);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.feature-card-compact .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 24px;
 }
-.feature-info p {
-  font-size: 1.1rem;
-  line-height: 1.7;
+
+.feature-card-compact .card-num {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 500;
   color: var(--text-secondary);
-  max-width: 460px;
+  letter-spacing: 0.05em;
+  opacity: 0.5;
+  transition: color 0.3s, opacity 0.3s;
 }
 
-.feature-visual {
-  height: 450px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.feature-canvas {
-  width: 90%;
-  height: 80%;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: rgba(13, 13, 13, 0.4);
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Canvas contents templates */
-.prompt-bubble {
-  padding: 16px 20px;
-  border-radius: 12px;
-  background-color: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--text-primary);
-  max-width: 80%;
-}
-.prompt-glow {
+.feature-card-compact:hover .card-num {
   color: var(--accent);
-  border-bottom: 1px solid var(--accent);
+  opacity: 1;
 }
 
-.chart-drawing {
+.feature-card-compact .card-icon {
+  color: var(--text-secondary);
+  transition: color 0.3s, transform 0.3s, opacity 0.3s;
+  opacity: 0.6;
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 70%;
-}
-.chart-draw-line {
-  height: 4px;
-  background-color: var(--border);
-  border-radius: 2px;
-  position: relative;
-  overflow: hidden;
-}
-.chart-draw-line::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--accent);
-  width: 0%;
-  animation: fill-draw 3s infinite alternate ease-in-out;
-}
-.chart-draw-line:nth-child(2)::before { animation-delay: 0.4s; }
-.chart-draw-line:nth-child(3)::before { animation-delay: 0.8s; }
-
-@keyframes fill-draw {
-  to { width: 90%; }
+  align-items: center;
+  justify-content: center;
 }
 
-.python-terminal {
-  width: 85%;
-  height: 75%;
-  background: #000;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 18px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  text-align: left;
+.feature-card-compact:hover .card-icon {
+  color: var(--accent);
+  transform: scale(1.1);
+  opacity: 1;
 }
-.term-line {
-  display: flex;
-  gap: 10px;
-  opacity: 0.7;
+
+.feature-card-compact .card-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.25;
+  margin: 0;
+  letter-spacing: -0.01em;
 }
-.term-prompt { color: var(--accent); font-weight: bold; }
-.term-code { color: #f8f8f2; }
-.term-output { color: var(--success); }
 
 /* ==========================================================================
    SECTION 6 — LIVE PREVIEW
@@ -1553,17 +1515,19 @@ nav {
     grid-template-columns: 1fr;
   }
 
-  .feature-bleed-section {
+  #features-section {
+    padding: 80px 40px;
+  }
+  .feature-card-compact {
+    padding: 28px;
+    height: 140px;
+  }
+  .feature-card-compact .card-title {
+    font-size: 1.35rem;
+  }
+  .features-grid {
     grid-template-columns: 1fr;
-    padding: 60px 40px;
-    gap: 40px;
-    text-align: center;
-  }
-  .feature-bleed-section:nth-child(even) .feature-visual {
-    order: -1;
-  }
-  .feature-info p {
-    margin: 0 auto;
+    gap: 16px;
   }
 
   .preview-content {

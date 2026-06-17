@@ -32,8 +32,7 @@
     <div class="nav-links">
       <a class="nav-link scroll-link" href="#how-it-works">How It Works</a>
       <a class="nav-link scroll-link" href="#upload-zone-section">Analyze</a>
-      <a class="nav-link scroll-link" href="#features-anchor">Features</a>
-      <a class="nav-link scroll-link" href="#metrics">Performance</a>
+      <a class="nav-link scroll-link" href="#features-section">Features</a>
     </div>
 
     <div class="nav-right">
@@ -416,78 +415,71 @@
     </div>
   </section>
 
-  <!-- Dummy Anchor for routing reference -->
-  <div id="features-anchor"></div>
-
   <!-- ==========================================
        SECTION 5 — FEATURES
        ========================================== -->
-  <!-- Feature 1 -->
-  <section class="feature-bleed-section">
-    <div class="feature-info">
-      <span class="feature-num">FEATURE 01</span>
-      <h2>Natural Language Analysis</h2>
-      <p>Communicate with your datasets using plain English. The agent handles ambiguous syntax, converts expressions, and isolates key parameters automatically.</p>
-    </div>
-    <div class="feature-visual">
-      <div class="feature-canvas">
-        <div class="prompt-bubble">
-          Show me <span class="prompt-glow">monthly gross revenues</span> grouped by department.
-        </div>
+  <section id="features-section" class="chapter-section">
+    <div class="chapter-num">CHAPTER 05</div>
+    <div class="section-container">
+      <div class="section-header-center">
+        <div class="eyebrow-tag"><span class="dot"></span>Capabilities</div>
+        <h2>Core Features</h2>
+        <p>A suite of developer-focused capabilities built for clean data modeling and analysis.</p>
       </div>
-    </div>
-  </section>
 
-  <!-- Feature 2 -->
-  <section class="feature-bleed-section">
-    <div class="feature-visual">
-      <div class="feature-canvas">
-        <div class="chart-drawing">
-          <div class="chart-draw-line"></div>
-          <div class="chart-draw-line"></div>
-          <div class="chart-draw-line"></div>
+      <div class="features-grid">
+        <!-- Feature 01 -->
+        <div class="feature-card-compact">
+          <div class="card-header">
+            <span class="card-num">01</span>
+            <div class="card-icon">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            </div>
+          </div>
+          <h3 class="card-title">Natural Language Analysis</h3>
         </div>
-      </div>
-    </div>
-    <div class="feature-info">
-      <span class="feature-num">FEATURE 02</span>
-      <h2>Automatic Visualizations</h2>
-      <p>Generate clean, high-resolution charts with Seaborn and Matplotlib. Image assets are safely downscaled and compressed to optimize loading speeds.</p>
-    </div>
-  </section>
 
-  <!-- Feature 3 -->
-  <section class="feature-bleed-section">
-    <div class="feature-info">
-      <span class="feature-num">FEATURE 03</span>
-      <h2>Python Execution</h2>
-      <p>Complex statistics and regression metrics are calculated in a sandbox python compiler, preventing typical formula syntax limitations.</p>
-    </div>
-    <div class="feature-visual">
-      <div class="feature-canvas">
-        <div class="python-terminal">
-          <div class="term-line"><span class="term-prompt">&gt;&gt;&gt;</span><span class="term-code">import pandas as pd</span></div>
-          <div class="term-line"><span class="term-prompt">&gt;&gt;&gt;</span><span class="term-code">df = pd.read_csv("data.csv")</span></div>
-          <div class="term-line"><span class="term-prompt">&gt;&gt;&gt;</span><span class="term-code">df.describe().T</span></div>
-          <div class="term-line"><span class="term-output">count mean std min max ...</span></div>
+        <!-- Feature 02 -->
+        <div class="feature-card-compact">
+          <div class="card-header">
+            <span class="card-num">02</span>
+            <div class="card-icon">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z" />
+              </svg>
+            </div>
+          </div>
+          <h3 class="card-title">Automatic Visualizations</h3>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Feature 4 -->
-  <section class="feature-bleed-section">
-    <div class="feature-visual">
-      <div class="feature-canvas">
-        <div class="prompt-bubble" style="max-width:90%">
-          Analyzing <span class="prompt-glow">questions.txt</span> + <span class="prompt-glow">raw_metrics.csv</span>
+        <!-- Feature 03 -->
+        <div class="feature-card-compact">
+          <div class="card-header">
+            <span class="card-num">03</span>
+            <div class="card-icon">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+            </div>
+          </div>
+          <h3 class="card-title">Python Execution</h3>
+        </div>
+
+        <!-- Feature 04 -->
+        <div class="feature-card-compact">
+          <div class="card-header">
+            <span class="card-num">04</span>
+            <div class="card-icon">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+              </svg>
+            </div>
+          </div>
+          <h3 class="card-title">Multi-File Reasoning</h3>
         </div>
       </div>
-    </div>
-    <div class="feature-info">
-      <span class="feature-num">FEATURE 04</span>
-      <h2>Multi-File Reasoning</h2>
-      <p>Simultaneously ingest tabular datasets and separate directive files to evaluate cross-file conditions without manual mapping configurations.</p>
     </div>
   </section>
 
