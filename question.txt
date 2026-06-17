@@ -1,0 +1,20 @@
+1. What is the total revenue generated?
+2. What is the total profit earned?
+3. Which region generated the highest revenue?
+4. Which region generated the lowest revenue?
+5. What is the average revenue per order?
+6. Which product category generated the highest revenue?
+7. Which product category generated the highest profit?
+8. What are the top 5 products by revenue?
+9. What are the top 5 products by profit?
+10. Which customer type generated the highest revenue?
+11. Which customer type generated the highest profit?
+12. What is the total quantity sold across all orders?
+13. Which month had the highest revenue?
+14. Which month had the highest profit?
+15. What is the average profit margin?
+16. Which product was sold in the highest quantity?
+17. What is the revenue contribution percentage of each region?
+18. Show the monthly revenue trend.
+19. Show the monthly profit trend.
+20. Identify the best-performing product category based on revenue and profit.
