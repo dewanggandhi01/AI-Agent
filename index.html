@@ -8,6 +8,16 @@
   
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="/static/style.css"/>
+  <style>
+    @keyframes skeleton-loading {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -493,6 +503,29 @@
 
       <div class="results-grid" id="resultsContainer">
         <!-- Results inject dynamically here -->
+      </div>
+
+      <!-- Dedicated Charts Section -->
+      <div id="chartsSection" class="charts-section" style="display: none; margin-top: 40px;">
+        <h3 class="charts-section-title" style="color: var(--text-primary); font-size: 1.5rem; margin-bottom: 20px; font-weight: bold; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+          Generated Visualizations
+        </h3>
+        <div id="chartsContainer" class="charts-grid" style="display: grid; grid-template-columns: 1fr; gap: 30px;">
+          <!-- Charts inject dynamically here -->
+        </div>
+      </div>
+
+      <!-- Charts Loading Skeleton -->
+      <div id="chartsSkeleton" class="charts-skeleton" style="display: none; margin-top: 40px;">
+        <h3 class="charts-section-title" style="color: var(--text-primary); font-size: 1.5rem; margin-bottom: 20px; font-weight: bold; border-bottom: 1px solid var(--border); padding-bottom: 10px; opacity: 0.5;">
+          Generating Visualizations...
+        </h3>
+        <div class="skeleton-grid" style="display: grid; grid-template-columns: 1fr; gap: 30px;">
+          <div class="skeleton-card" style="background: var(--card-bg, #1e293b); border: 1px solid var(--border, #334155); border-radius: 8px; padding: 24px; display: flex; flex-direction: column; gap: 15px;">
+            <div class="skeleton-title" style="height: 16px; width: 150px; background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite linear; border-radius: 4px;"></div>
+            <div class="skeleton-image" style="height: 400px; width: 100%; background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite linear; border-radius: 6px;"></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>

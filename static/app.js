@@ -202,6 +202,16 @@ class DataAnalystAgent {
     this.currentMsgIndex = 0;
     this.stepperStatusMsg.textContent = this.progressMessages[0];
 
+    // Show loading skeleton and hide charts section
+    const chartsSkeleton = document.getElementById('chartsSkeleton');
+    if (chartsSkeleton) {
+      chartsSkeleton.style.display = 'block';
+    }
+    const chartsSection = document.getElementById('chartsSection');
+    if (chartsSection) {
+      chartsSection.style.display = 'none';
+    }
+
     // Gradually fill bar up to 90%
     this.barTimer = setInterval(() => {
       if (this.barPercent < 90) {
@@ -242,6 +252,12 @@ class DataAnalystAgent {
     
     this.stepperBarFill.style.width = '100%';
     this.stepperStatusMsg.textContent = isSuccessful ? 'Analysis Completed.' : 'Process Terminated.';
+
+    // Hide loading skeleton
+    const chartsSkeleton = document.getElementById('chartsSkeleton');
+    if (chartsSkeleton) {
+      chartsSkeleton.style.display = 'none';
+    }
     
     setTimeout(() => {
       this.stepperProgress.classList.remove('visible');
@@ -309,7 +325,7 @@ class DataAnalystAgent {
       this._renderError(error.message || 'Unknown server error');
     } finally {
       this.runBtn.disabled = false;
-      this.runBtn.innerHTML = `
+    this.runBtn.innerHTML = `
         <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;display:block;">
           <polygon points="6 3 20 12 6 21 6 3"/>
         </svg>
@@ -320,6 +336,12 @@ class DataAnalystAgent {
 
   _clearResults() {
     this.resultsContainer.innerHTML = '';
+    const chartsContainer = document.getElementById('chartsContainer');
+    if (chartsContainer) chartsContainer.innerHTML = '';
+    const chartsSection = document.getElementById('chartsSection');
+    if (chartsSection) chartsSection.style.display = 'none';
+    const chartsSkeleton = document.getElementById('chartsSkeleton');
+    if (chartsSkeleton) chartsSkeleton.style.display = 'none';
     this.resultsSection.classList.remove('visible');
   }
 
@@ -360,16 +382,13 @@ class DataAnalystAgent {
       body.className = 'res-ans-body';
       this._renderAnswerContent(answer, body);
 
-      // Check if there is an associated chart for this question index
-      const chartKey = `chart_${index + 1}`;
-      if (charts[chartKey]) {
-        this._renderChartImage(charts[chartKey], body);
-      }
-
       card.appendChild(header);
       card.appendChild(body);
       this.resultsContainer.appendChild(card);
     });
+
+    // Render charts in dedicated section
+    this._renderChartsSection(charts);
 
     // Smooth scroll down to Results
     setTimeout(() => {
@@ -378,7 +397,7 @@ class DataAnalystAgent {
         behavior: 'smooth'
       });
       // Trigger a subtle GSAP slide in for each card
-      gsap.from('.res-card', {
+      gsap.from('.res-card, .chart-card', {
         y: 30,
         opacity: 0,
         stagger: 0.15,
@@ -388,24 +407,90 @@ class DataAnalystAgent {
     }, 200);
   }
 
-  _renderChartImage(imgSrc, container) {
-    const wrap = document.createElement('div');
-    wrap.className = 'res-image-wrapper';
-    wrap.style.marginTop = '15px';
-    wrap.style.display = 'block';
+  _renderChartsSection(charts) {
+    const chartsSection = document.getElementById('chartsSection');
+    const chartsContainer = document.getElementById('chartsContainer');
     
-    const img = document.createElement('img');
-    img.src = imgSrc;
-    img.alt = 'Analysis Chart';
-    img.addEventListener('click', () => this._openLightbox(imgSrc));
+    if (!chartsSection || !chartsContainer) return;
     
-    const hint = document.createElement('div');
-    hint.className = 'res-image-hint';
-    hint.textContent = '🔍 CLICK CHART TO EXPAND';
+    chartsContainer.innerHTML = '';
     
-    wrap.appendChild(img);
-    wrap.appendChild(hint);
-    container.appendChild(wrap);
+    const entries = Object.entries(charts);
+    if (!entries.length) {
+      chartsSection.style.display = 'none';
+      return;
+    }
+    
+    chartsSection.style.display = 'block';
+    
+    entries.forEach(([key, value]) => {
+      const imgSrc = this._checkImageURI(value);
+      if (!imgSrc) return;
+      
+      const chartCard = document.createElement('div');
+      chartCard.className = 'chart-card';
+      chartCard.style.background = 'var(--card-bg, #1e293b)';
+      chartCard.style.border = '1px solid var(--border, #334155)';
+      chartCard.style.borderRadius = '8px';
+      chartCard.style.padding = '24px';
+      chartCard.style.marginBottom = '20px';
+      chartCard.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
+      
+      const title = document.createElement('h3');
+      title.textContent = key.replace(/_/g, ' ').toUpperCase();
+      title.style.color = 'var(--text-secondary, #94a3b8)';
+      title.style.fontSize = '0.9rem';
+      title.style.fontFamily = 'var(--font-mono, monospace)';
+      title.style.letterSpacing = '0.05em';
+      title.style.marginBottom = '12px';
+      title.style.fontWeight = 'bold';
+      
+      const imgWrapper = document.createElement('div');
+      imgWrapper.className = 'res-image-wrapper';
+      imgWrapper.style.width = '100%';
+      imgWrapper.style.textAlign = 'center';
+      imgWrapper.style.display = 'block';
+      
+      const img = document.createElement('img');
+      img.src = imgSrc;
+      img.alt = key;
+      img.style.width = '100%';
+      img.style.maxWidth = '900px';
+      img.style.borderRadius = '8px';
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', () => this._openLightbox(imgSrc));
+      
+      const hint = document.createElement('div');
+      hint.className = 'res-image-hint';
+      hint.textContent = '🔍 CLICK CHART TO EXPAND';
+      hint.style.marginTop = '8px';
+      
+      imgWrapper.appendChild(img);
+      imgWrapper.appendChild(hint);
+      chartCard.appendChild(title);
+      chartCard.appendChild(imgWrapper);
+      chartsContainer.appendChild(chartCard);
+    });
+  }
+
+  _cleanBase64FromObject(obj) {
+    if (!obj || typeof obj !== 'object') return obj;
+    const clean = Array.isArray(obj) ? [] : {};
+    for (const [k, v] of Object.entries(obj)) {
+      if (typeof v === 'string') {
+        const trimmed = v.trim();
+        if (/^data:image\//i.test(trimmed) || (/^[A-Za-z0-9+/=\r\n]+$/.test(trimmed) && trimmed.length > 200)) {
+          clean[k] = "[Generated Chart Image]";
+        } else {
+          clean[k] = v;
+        }
+      } else if (typeof v === 'object' && v !== null) {
+        clean[k] = this._cleanBase64FromObject(v);
+      } else {
+        clean[k] = v;
+      }
+    }
+    return clean;
   }
 
   _renderAnswerContent(value, container) {
@@ -430,7 +515,8 @@ class DataAnalystAgent {
       return;
     }
 
-    const rawText = (value && typeof value === 'object') ? JSON.stringify(value, null, 2) : String(value ?? '');
+    const cleanValue = this._cleanBase64FromObject(value);
+    const rawText = (cleanValue && typeof cleanValue === 'object') ? JSON.stringify(cleanValue, null, 2) : String(cleanValue ?? '');
     
     if (rawText.length > 120 || rawText.includes('\n')) {
       const pre = document.createElement('pre');
@@ -472,20 +558,30 @@ class DataAnalystAgent {
   }
 
   _checkImageURI(value) {
-    let rawStr = null;
+    if (!value) return null;
+    
     if (typeof value === 'string') {
-      rawStr = value.trim();
-    } else if (value && typeof value === 'object') {
-      rawStr = (value.image || value.base64 || value.plot || value.data || '').trim();
+      const rawStr = value.trim();
+      if (/^data:image\//i.test(rawStr)) return rawStr;
+      if (/^[A-Za-z0-9+/=\r\n]+$/.test(rawStr) && rawStr.length > 200) {
+        return 'data:image/png;base64,' + rawStr;
+      }
+      return null;
     }
     
-    if (!rawStr) return null;
-
-    // Normalizing broken headers if present
-    rawStr = rawStr.replace(/^data:aimage\//i, 'data:image/');
-    if (/^data:image\//i.test(rawStr)) return rawStr;
-    if (/^[A-Za-z0-9+/=\r\n]+$/.test(rawStr) && rawStr.length > 200) {
-      return 'data:image/png;base64,' + rawStr;
+    if (typeof value === 'object') {
+      for (const key of ['image', 'base64', 'plot', 'data', 'chart', 'value', 'answer']) {
+        if (value[key] && typeof value[key] === 'string') {
+          const detected = this._checkImageURI(value[key]);
+          if (detected) return detected;
+        }
+      }
+      for (const key in value) {
+        if (value[key] && typeof value[key] === 'string') {
+          const detected = this._checkImageURI(value[key]);
+          if (detected) return detected;
+        }
+      }
     }
     return null;
   }
