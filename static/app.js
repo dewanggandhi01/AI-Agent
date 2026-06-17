@@ -738,65 +738,6 @@ class DataAnalystAgent {
       });
     });
 
-    // 6. Monitor Screen Typist Simulator in Section 6 (Live Preview)
-    this._initTypistEffect();
-
-  }
-
-  _initTypistEffect() {
-    const termCodeLines = [
-      'df = pd.read_csv("dataset.csv")',
-      'revenue_by_product = df.groupby("Product")["Revenue"].sum()',
-      'highest_revenue_prod = revenue_by_product.idxmax()',
-      'print(f"Product: {highest_revenue_prod}, Rev: {revenue_by_product.max()}")'
-    ];
-
-    const targetEl = document.getElementById('typing-code-block');
-    if (!targetEl) return;
-
-    let lineIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-
-    const type = () => {
-      const currentLine = termCodeLines[lineIndex];
-      
-      if (!isDeleting) {
-        targetEl.textContent = currentLine.substring(0, charIndex + 1) + '█';
-        charIndex++;
-
-        if (charIndex === currentLine.length) {
-          // Pause at end of line
-          setTimeout(() => {
-            isDeleting = true;
-            type();
-          }, 2500);
-          return;
-        }
-      } else {
-        targetEl.textContent = currentLine.substring(0, charIndex - 1) + '█';
-        charIndex--;
-
-        if (charIndex === 0) {
-          isDeleting = false;
-          lineIndex = (lineIndex + 1) % termCodeLines.length;
-          // Short pause before starting next line
-          setTimeout(type, 500);
-          return;
-        }
-      }
-
-      const delay = isDeleting ? 25 : 60 + Math.random() * 50;
-      setTimeout(type, delay);
-    };
-
-    // Trigger typing effect slightly delayed when scrolled into view
-    ScrollTrigger.create({
-      trigger: '#live-preview',
-      start: 'top 65%',
-      onEnter: () => setTimeout(type, 500),
-      once: true
-    });
   }
 }
 

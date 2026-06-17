@@ -536,35 +536,45 @@ nav {
 }
 
 .horizontal-scroll-container {
-  display: flex;
-  overflow-x: auto;
-  gap: 40px;
-  padding: 20px 60px 60px;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none; /* Hide scrollbar */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 20px 20px 40px;
 }
-.horizontal-scroll-container::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for Chrome/Safari */
+
+@media (min-width: 600px) {
+  .horizontal-scroll-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .horizontal-scroll-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 1280px) {
+  .horizontal-scroll-container {
+    grid-template-columns: repeat(5, 1fr);
+    padding: 20px 60px 40px;
+  }
 }
 
 .scroll-step-card {
-  flex: 0 0 450px;
-  scroll-snap-align: center;
-  min-height: 480px;
-  padding: 60px 48px;
+  background: rgba(5, 5, 5, 0.4);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 30px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  background: rgba(5, 5, 5, 0.4);
-  border: 1px solid var(--border);
-  border-radius: 12px;
   transition: border-color 0.4s, transform 0.4s, box-shadow 0.4s;
+  min-height: 250px;
 }
 .scroll-step-card:hover {
   border-color: rgba(255, 106, 0, 0.3);
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 106, 0, 0.05);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 106, 0, 0.03);
 }
 
 .step-header {
@@ -1620,9 +1630,9 @@ nav {
   }
 
   .scroll-step-card {
-    flex: 0 0 320px;
-    min-height: 420px;
-    padding: 40px 30px;
+    flex: none;
+    min-height: auto;
+    padding: 24px 20px;
   }
   .step-title {
     font-size: 1.4rem;
